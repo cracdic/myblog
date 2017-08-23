@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>编辑文章</h1>
+</div>
+<div>
+	<input type='file'>
+	<button id="upload-btn" type="button">上传</button>
+	<form class="form" method="POST">
+		{{ form.hidden_tag() }}
+		{{ wtf.form_field(form.title) }}
+		<input name="tags" class="tagsinput" data-role="tagsinput"
+		 	value="{{ tags }}" />
+		{{ wtf.form_field(form.body) }}
+		{{ wtf.form_field(form.submit) }}
+	</form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+<script>
+var files = [];
+$(document).ready(function(){
+	$("input").change(function(){
+		files = this.files;
+	});
+});
+$("#upload-btn").click(function(){
+	var fd = new FormData();
+	for (var i = 0; i < files.length; i++) {
+		fd.append("file", files[i]);
+	}
+	$.ajax({
+		url: "/upload/",
+		method: "POST",
+		data: fd,
+		contentType: false,
+		processData: false,
+		cache: false,
+		success: function(data){
+			var dest = document.getElementById("flask-pagedown-body");
+			var img = "<img src=\"" + data.url + "\" alt=\"" + data.name + "\" />";
+			dest.value = dest.value + img;
+		}
+	});
+});
+</script>
+<script type="text/javascript">
+	var myInput = document.getElementById("flask-pagedown-body");
+	if(myInput.addEventListener) {
+		myInput.addEventListener('keydown', this.keyHandler, false);
+	}
+	else if(myInput.attachEvent) {
+		myInput.attachEvent('onkeydown', this.keyHandler);
+	}
+
+	function keyHandler(e) {
+		var TABKEY = 9;
+		if(e.keyCode == TABKEY) {
+			this.value += "    ";
+			if(e.preventDefault) {
+				e.preventDefault();
+			}
+			return false;
+		}
+	}
+</script>
+{% endblock %}

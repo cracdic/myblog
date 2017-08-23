@@ -1,0 +1,9 @@
+<div class="tags-content">
+	{% for tag in tags %}
+	<a href="{{ url_for('main.tag', name=tag.name) }}">
+		<button class="btn btn-info">
+		{{ tag.name }}({{ tag.posts.count() }})
+		</button>
+	</a>
+	{% endfor %}
+</div>

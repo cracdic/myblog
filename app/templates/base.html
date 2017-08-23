@@ -1,0 +1,95 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/flat-ui.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/flat-ui.min.js') }}"></script>
+{% endblock %}
+
+{% block title %}Striped Slug{% endblock %}
+
+{% block navbar %}
+<div class="container">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse"
+			data-target=".navbar-collapse">
+			<span class="sr-only">Toggle navigation</span>
+		</button>
+		<a class="navbar-brand" href="/">Striped Slug</a>
+	</div>
+	<div class="navbar-collapse collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="{{ url_for('main.pro_posts') }}">编程</a></li>
+			<li><a href="{{ url_for('main.ani_posts') }}">动画</a></li>
+			<li><a href="{{ url_for('main.muse_posts') }}">音乐</a></li>
+		</ul>
+		<form class="navbar-form navbar-left" action="#" role="search">
+			<div class="form-group">
+				<div class="input-group">
+					<input class="form-control" id="navbarInput-01"
+						type="search" placeholder="搜索">
+					<span class="input-group-btn">
+						<button type="submit" class="btn">
+							<span class="fui-search">
+							</span>
+						</button>
+					</span>
+				</div>
+			</div>
+		</form>
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					下拉菜单<b class="caret"></b>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#">动作</a></li>
+					<li><a href="#">又一个动作</a></li>
+					<li><a href="#">放些东西</a></li>
+					<li class="divider"></li>
+					<li><a href="#">分隔的链接</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="#">
+					<span class="visible-sm visible-xs">
+						Settings
+						<span class="fui-gear"></span>
+					</span>
+					<span class="visible-md visible-lg">
+						<span class="fui-gear"></span>
+					</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+	</div>
+</nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	{% for message in get_flashed_messages() %}
+	<div class="alert alert-warning">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		{{ message }}
+	</div>
+	{% endfor %}
+
+	{% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang('zh-cn') }}
+{% endblock %}
+

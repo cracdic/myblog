@@ -5,11 +5,11 @@
 {% block page_content %}
 <div class="container">
 	<div class="row">
-	{% for post in posts %}
 	<div class="col-md-9 posts">
+	{% for post in posts %}
 		{% include '_posts.html' %}
-	</div>
 	{% endfor %}
+	</div>
 	<div class="col-md-3 tags">
 		{% include '_tags.html' %}
 	</div>

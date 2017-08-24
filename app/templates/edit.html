@@ -11,6 +11,7 @@
 	<form class="form" method="POST">
 		{{ form.hidden_tag() }}
 		{{ wtf.form_field(form.title) }}
+		{{ wtf.form_field(form.select) }}
 		<input name="tags" class="tagsinput" data-role="tagsinput"
 		 	value="{{ tags }}" />
 		{{ wtf.form_field(form.body) }}

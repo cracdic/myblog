@@ -60,6 +60,21 @@ def index():
     return render_template('index.html', posts=posts,
                            pagination=pagination, tags=tags)
 
+@main.route('/search', methods=['GET', 'POST'])
+def w_search():
+    tags = Tag.query.all()
+    if request.method == "POST":
+        keyword = request.values.get('keyword')
+        print(keyword)
+    page = request.args.get('page', 1, type=int)
+    pagination = Post.query.whoosh_search(
+        keyword, limit=20).order_by(
+        Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
+    posts = pagination.items
+    return render_template('index.html', posts=posts,
+                           pagination=pagination, tags=tags)
+
 @main.route('/newpost', methods=['GET', 'POST'])
 @login_required
 def new():
@@ -68,7 +83,8 @@ def new():
     if form.validate_on_submit():
         tags_new = [x.strip() for x in request.form.get('tags').split(',')]
         Tag.insert_tags(tags_new)
-        post = Post(body=form.body.data, title=form.title.data)
+        post = Post(subject=form.select.data, 
+            body=form.body.data, title=form.title.data)
         post.add_and_remove_tags([], tags_new)
         flash(u'已发布新文章')
         return redirect(url_for('.post', id=post.id))
@@ -86,6 +102,7 @@ def edit(id):
         Tag.insert_tags(tags_new)
         post.add_and_remove_tags(tags_old, tags_new)
         Tag.delete_tags(tags_old, tags_new)
+        post.subject = form.select.data
         post.body = form.body.data
         post.title = form.title.data
         db.session.add(post)
@@ -112,7 +129,6 @@ def post(id):
     post = Post.query.get_or_404(id)
     return render_template('post.html', post=post,
                            tags=post.tags.all())
-
 
 @main.route('/admin-login', methods=['GET', 'POST'])
 def login():

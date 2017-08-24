@@ -7,6 +7,7 @@ from flask_pagedown import PageDown
 from flask_uploads import UploadSet, configure_uploads, patch_request_class, IMAGES
 from markdown import markdown
 from config import config
+import flask_whooshalchemyplus
 
 bootstrap = Bootstrap()
 moment = Moment()
@@ -29,6 +30,7 @@ def create_app(config_name):
     login_manager.init_app(app)
     configure_uploads(app, pictures)
     patch_request_class(app)
+    flask_whooshalchemyplus.init_app(app)
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)

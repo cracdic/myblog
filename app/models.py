@@ -7,9 +7,11 @@ from flask_login import UserMixin
 from app.exceptions import ValidationError
 from datetime import datetime
 from markdown import markdown
-from app import app
+from jieba.analyse import ChineseAnalyzer
+import sys
 import hashlib
 import bleach
+import flask_whooshalchemyplus
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -68,6 +70,9 @@ class Tag(db.Model):
 
 class Post(db.Model):
     __tablename__ = 'posts'
+    __searchable__ = ['subject', 'title', 'body']
+    __analyzer__ = ChineseAnalyzer()
+
     id = db.Column(db.Integer, primary_key=True)
     subject = db.Column(db.Text)
     title = db.Column(db.Text)
@@ -133,6 +138,7 @@ class Post(db.Model):
                      timestamp=forgery_py.date.date(True))
             db.session.add(p)
             db.session.commit()
+
 
 db.event.listen(Post.body, 'set', Post.on_changed_body_html)
 db.event.listen(Post.body, 'set', Post.on_changed_body_brief)

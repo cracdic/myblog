@@ -11,7 +11,6 @@ from jieba.analyse import ChineseAnalyzer
 import sys
 import hashlib
 import bleach
-import flask_whooshalchemyplus
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -44,7 +43,10 @@ categories = db.Table('categories',
 class Tag(db.Model):
     __tablename__ = "tags"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, default='')
+    name = db.Column(db.String(32), default='')
+
+    def __repr__(self):
+        return '<Tag %r>' % self.id
 
     @property
     def tags_all(self):
@@ -60,8 +62,7 @@ class Tag(db.Model):
         db.session.commit()
 
     @staticmethod
-    def delete_tags(tags_old, tags_new):
-        tags_delete = set(tags_old) - set(tags_new)
+    def delete_tags(tags_delete):
         for tag_delete in tags_delete:
             tag = Tag.query.filter_by(name=tag_delete).first()
             if tag and not tag.posts.count():
@@ -85,6 +86,9 @@ class Post(db.Model):
                            backref=db.backref('posts', lazy='dynamic'),
                            lazy='dynamic')
 
+    def __repr__(self):
+        return '<Post %r>' % self.id
+
     def add_and_remove_tags(self, tags_old, tags_new):
         new = set(tags_new)
         old = set(tags_old)
@@ -100,6 +104,7 @@ class Post(db.Model):
                 self.tags.remove(tag)
         db.session.add(self)
         db.session.commit()
+        posts = Post.query.all()
 
     @property
     def tags_post(self):

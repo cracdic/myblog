@@ -4,9 +4,11 @@
 {{ super() }}
 <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
 <link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/flat-ui.min.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/flat-ui.min.js') }}"></script>
 {% endblock %}
 
@@ -17,7 +19,7 @@
 	<div class="container">
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle" data-toggle="collapse"
-			data-target=".navbar-collapse">
+			data-target=".collapse">
 			<span class="sr-only">Toggle navigation</span>
 		</button>
 		<a class="navbar-brand" href="/">Striped Slug</a>
@@ -28,14 +30,14 @@
 			<li><a href="{{ url_for('main.ani_posts') }}">动画</a></li>
 			<li><a href="{{ url_for('main.muse_posts') }}">音乐</a></li>
 		</ul>
-		<form class="navbar-form"
+		<form class="navbar-form navbar-left"
 	   		action="{{ url_for('main.w_search') }}" role="search" method="post">
 			<div class="form-group">
 				<div class="input-group">
 					<input class="form-control" id="navbarInput-01"
 						name="keyword" type="search" placeholder="搜索">
 					<span class="input-group-btn">
-						<button type="submit" class="btn">
+						<button type="submit" class="btn" name="search-btn">
 							<span class="fui-search">
 							</span>
 						</button>
@@ -44,6 +46,7 @@
 			</div>
 		</form>
 		<ul class="nav navbar-nav navbar-right">
+		{% if current_user.is_authenticated %}
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 					下拉菜单 <b class="caret"></b>
@@ -57,24 +60,25 @@
 				</ul>
 			</li>
 			<li>
-				<a href="#">
+				<a href="{{ url_for('main.logout') }}">
 					<span class="visible-sm visible-xs">
 						Settings
 						<span class="fui-gear"></span>
 					</span>
-					<span class="visible-md visible-lg">
+					<span class="visible-md visible-lg" name="logout">
 						<span class="fui-gear"></span>
 					</span>
 				</a>
 			</li>
+		{% endif %}
 		</ul>
 	</div>
-	</div>
+	<div>
 </nav>
 {% endblock %}
 
 {% block content %}
-<div class="container page-top">
+<div class="container">
 	{% for message in get_flashed_messages() %}
 	<div class="alert alert-warning">
 		<button type="button" class="close" data-dismiss="alert">&times;</button>

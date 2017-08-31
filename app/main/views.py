@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-from pprint import pprint
 from flask import render_template, session, redirect, url_for, request, flash, current_app, \
     jsonify
-from flask_login import current_user, login_user, login_required
+from flask_login import current_user, login_user, login_required, logout_user
 
 from . import main
 from .. import db, pictures
@@ -22,19 +21,19 @@ def subject_filter(subject):
 
 @main.route('/Programming')
 def pro_posts():
-    post = subject_filter(u'编程')
+    post = subject_filter('programming')
     return render_template('index.html', posts=post[0],
                            pagination=post[1], tags=post[2])
 
 @main.route('/Animation')
 def ani_posts():
-    post = subject_filter(u'动画')
+    post = subject_filter(u'animation')
     return render_template('index.html', posts=post[0],
                            pagination=post[1], tags=post[2])
 
 @main.route('/Music')
 def muse_posts():
-    post = subject_filter(u'音乐')
+    post = subject_filter(u'music')
     return render_template('index.html', posts=post[0],
                            pagination=post[1], tags=post[2])
 
@@ -65,7 +64,6 @@ def w_search():
     tags = Tag.query.all()
     if request.method == "POST":
         keyword = request.values.get('keyword')
-        print(keyword)
     page = request.args.get('page', 1, type=int)
     pagination = Post.query.whoosh_search(
         keyword, limit=20).order_by(
@@ -82,9 +80,11 @@ def new():
     tags_all = Tag().tags_all
     if form.validate_on_submit():
         tags_new = [x.strip() for x in request.form.get('tags').split(',')]
+        tags_new = [tag for tag in tags_new if tag not in ['', ' ', None]]
         Tag.insert_tags(tags_new)
         post = Post(subject=form.select.data, 
-            body=form.body.data, title=form.title.data)
+                    body=form.body.data, 
+                    title=form.title.data)
         post.add_and_remove_tags([], tags_new)
         flash(u'已发布新文章')
         return redirect(url_for('.post', id=post.id))
@@ -99,14 +99,13 @@ def edit(id):
     tags = ','.join(tags_old)
     if form.validate_on_submit():
         tags_new = [x.strip() for x in request.form.get('tags').split(',')]
+        tags_new = [tag for tag in tags_new if tag not in ['', ' ', None]]
         Tag.insert_tags(tags_new)
-        post.add_and_remove_tags(tags_old, tags_new)
-        Tag.delete_tags(tags_old, tags_new)
         post.subject = form.select.data
         post.body = form.body.data
         post.title = form.title.data
-        db.session.add(post)
-        db.session.commit()
+        post.add_and_remove_tags(tags_old, tags_new)
+        Tag.delete_tags(set(tags_old) - set(tags_new))
         flash(u'文章已更新')
         return redirect(url_for('.post', id=post.id))
     form.body.data = post.body
@@ -141,3 +140,20 @@ def login():
         if user is None or not user.verify_password(form.password.data):
             flash(u'用户名或密码错误')
     return render_template('login.html', form=form)
+
+@main.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash(u'你已退出登录。')
+    return redirect(url_for('main.index'))
+
+@main.route('/shutdown')
+def server_shutdown():
+    if not current_app.testing:
+        abort(404)
+    shutdown = request.environ.get('werkzeug.server.shutdown')
+    if not shutdown:
+        abort(500)
+    shutdown()
+    return 'Shutting down...'

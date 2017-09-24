@@ -2,12 +2,43 @@ a {
 	color: #011b35;
 }
 
+img {
+  	display: block;
+  	margin-left: auto;
+  	margin-right: auto;
+}
+
 ul.pagination-minimal {
 	margin-top: 50px;
 }
 
 span.post-tag {
 	background-color: #2C3E50;
+}
+
+div.jumbotron {
+	/*background-image: url('head.jpg');*/
+	background-color: #3498DB;
+	background-size: cover;
+	background:	contain;
+	height: 100%; 
+	margin-bottom: 0;
+}
+
+div.posts {
+	background-color: #34495E;
+}
+
+div.tags {
+	background-color: #2C3E50;
+}
+
+div.container-fluid {
+	padding: 0;
+}
+
+nav.navbar.navbar-default.navbar-fixed-top {
+	margin-bottom: 0;
 }
 
 button.btn-info {
@@ -18,12 +49,17 @@ button.btn-info {
 	margin-bottom: 10px;
 }
 
-div.alert-warning {
-	margin-top: -90px;
+div.row {
+	margin-left: 0;
+	margin-right: 0;
 }
 
+div.alert-warning {
+	margin-top: -53px;
+}
+ 
 div.tags {
-	margin-top: 15px;
+	padding-top: 100px;
 }
 
 div.posts-date {
@@ -45,7 +81,6 @@ div.post-content {
 	border-width: thin;
 	border-color: #d2dce6;
 	box-shadow: 1px 1px 4px;
-	border-radius: 10px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	padding-top: 20px;
@@ -60,7 +95,6 @@ div.posts-content {
 	border-width: thin;
 	border-color: #d2dce6;
 	box-shadow: 1px 1px 4px;
-	border-radius: 10px;
 	margin-top: 20px;
 	margin-bottom: 20px;
 	padding-top: 15px;
@@ -69,8 +103,19 @@ div.posts-content {
 	padding-bottom: 20px;
 }
 
+div.row-eq-height {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+div.posts-set {
+	padding-top: 50px;	
+}
+
 body {
-	padding-top: 150px;
-	background-color: #e0e0e0;
+	margin-top: 53px;
+	background-color: #1ABC9C;
 }
 

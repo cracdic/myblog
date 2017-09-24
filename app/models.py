@@ -21,6 +21,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
+    avatar = db.Column(db.String(128))
 
     @property
     def password(self):
@@ -104,7 +105,6 @@ class Post(db.Model):
                 self.tags.remove(tag)
         db.session.add(self)
         db.session.commit()
-        posts = Post.query.all()
 
     @property
     def tags_post(self):
@@ -116,7 +116,7 @@ class Post(db.Model):
     def on_changed_body_html(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'img']
+                        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img']
         attrs = {'img': ['alt', 'src']}
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
@@ -126,7 +126,7 @@ class Post(db.Model):
     def on_changed_body_brief(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p']
+                        'h1', 'h2', 'h3','h4', 'h5', 'h6', 'p']
         brief = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))

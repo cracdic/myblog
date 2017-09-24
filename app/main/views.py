@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import render_template, session, redirect, url_for, request, flash, current_app, \
     jsonify
 from flask_login import current_user, login_user, login_required, logout_user
+from flask_sqlalchemy import get_debug_queries
 
 from . import main
 from .. import db, pictures
@@ -18,6 +19,16 @@ def subject_filter(subject):
         page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
     posts = pagination.items
     return (posts, pagination, tags)
+
+@main.after_app_request
+def after_request(response):
+    for query in get_debug_queries():
+        if query.duration >= current_app.config['FLASKY_DB_QUERY_TIMEOUT']:
+            current_app.logger.warning(
+                'Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n' %
+                    (query.statement, query.parameters, query.duration,
+                        query.context))
+    return response
 
 @main.route('/Programming')
 def pro_posts():
@@ -112,14 +123,27 @@ def edit(id):
     form.title.data = post.title
     return render_template('edit.html', form=form, tags=tags)
 
-@main.route('/upload', methods=['POST'])
+@main.route('/upload/', methods=['POST'])
 @login_required
 def upload_picture():
     if 'file' in request.files:
         filename = pictures.save(request.files['file'])
-        file_url = pictures.url(filename)
+        # file_url = pictures.url(filename)
+        # relative path
+        file_url = current_app.config['RENDER_PICTURES_DEST'] + filename
         return jsonify({'name': filename,
                         'url': file_url,
+                        'status': 'upload success'})
+    return jsonify({'status': "upload fail"})
+
+@main.route('/upload-avatar/', methods=['POST'])
+@login_required
+def upload_avatar():
+    if 'file' in request.files:
+        filename = pictures.save(request.files['file'])
+        file_url = current_app.config['RENDER_PICTURES_DEST'] + filename
+        current_user.avatar = file_url
+        return jsonify({'url': file_url,
                         'status': 'upload success'})
     return jsonify({'status': "upload fail"})
 

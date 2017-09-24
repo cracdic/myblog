@@ -15,7 +15,7 @@
 {% block title %}Striped Slug{% endblock %}
 
 {% block navbar %}
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 	<div class="container">
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle" data-toggle="collapse"
@@ -78,6 +78,8 @@
 {% endblock %}
 
 {% block content %}
+<div class="jumbotron">
+</div>
 <div class="container">
 	{% for message in get_flashed_messages() %}
 	<div class="alert alert-warning">
@@ -85,9 +87,8 @@
 		{{ message }}
 	</div>
 	{% endfor %}
-
-	{% block page_content %}{% endblock %}
 </div>
+	{% block page_content %}{% endblock %}
 {% endblock %}
 
 {% block scripts %}

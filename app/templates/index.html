@@ -3,20 +3,29 @@
 {% import "_macros.html" as macros %}
 
 {% block page_content %}
-<div class="container">
-	<div class="row">
+<div class="container-fluid">
+	<div class="row row-eq-height">
 	<div class="col-md-9 posts">
+	<div class="col-md-10 col-md-offset-1 posts-set">
 	{% for post in posts %}
 		{% include '_posts.html' %}
 	{% endfor %}
 	</div>
-	<div class="col-md-3 tags">
-		{% include '_tags.html' %}
-	</div>
-	<div class="col-md-9 pagin">
+	<div class="col-md-3 col-md-offset-2 pagin">
 	{% if pagination %}
 		{{ macros.pagination_widget(pagination, '.index') }}
 	{% endif %}
+	</div>
+	</div>
+	<div class="col-md-3 tags">
+		<div class="avatar">
+			<img src="{{ current_user.avatar }}" id="avatar-img" />
+		</div>
+		{% if current_user.is_authenticated %}
+		<input type='file'>
+		<button id="upload-btn" type="button" class="btn btn-default">修改头像</button>
+		{% endif %}
+		{% include '_tags.html' %}
 	</div>
 	</div>
 </div>
@@ -25,4 +34,32 @@
 {% block scripts %}
 {{ super() }}
 {{ pagedown.include_pagedown() }}
+{% if current_user.is_authenticated %}
+<script>
+var files = [];
+$(document).ready(function(){
+	$("input").change(function(){
+		files = this.files;
+	});
+});
+$("#upload-btn").click(function(){
+	var fd = new FormData();
+	for (var i = 0; i < files.length; i++) {
+		fd.append("file", files[i]);
+	}
+	$.ajax({
+		url: "/upload/",
+		method: "POST",
+		data: fd,
+		contentType: false,
+		processData: false,
+		cache: false,
+		success: function(data){
+			var dest = document.getElementById("avatar-img");
+			dest.src = data.url;
+		}
+	});
+});
+</script>
+{% endif %}
 {% endblock %}

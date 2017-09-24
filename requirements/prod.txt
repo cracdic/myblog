@@ -1,2 +1,4 @@
 -r common.txt
 
+gunicorn==19.7.1
+Flask-SSLify==0.1.5

@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
+from flask_mail import Mail
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -11,6 +12,7 @@ import flask_whooshalchemyplus
 
 bootstrap = Bootstrap()
 moment = Moment()
+mail = Mail()
 db = SQLAlchemy()
 pagedown = PageDown()
 pictures = UploadSet('pictures', IMAGES)
@@ -25,12 +27,17 @@ def create_app(config_name):
 
     bootstrap.init_app(app)
     moment.init_app(app)
+    mail.init_app(app)
     db.init_app(app)
     pagedown.init_app(app)
     login_manager.init_app(app)
     configure_uploads(app, pictures)
     patch_request_class(app)
     flask_whooshalchemyplus.init_app(app)
+
+    if not app.debug and not app.testing and not app.config['SSL_DISABLE']:
+        from flask_sslify import SSLify
+        sslify = SSLify(app)
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)

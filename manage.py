@@ -12,6 +12,14 @@ if os.environ.get('FLASK_COVERAGE'):
     COV = coverage.coverage(branch=True, include='app/*')
     COV.start()
 
+# read environment vars from .env file
+if os.path.exists('.env'):
+    print('Importing environment from .env...')
+    for line in open('.env'):
+        var = line.strip().split('=')
+        if  len(var) == 2:
+            os.environ[var[0]] = var[1]
+
 app = create_app(os.getenv('BLOG_CONFIG') or 'default')
 
 manager = Manager(app)

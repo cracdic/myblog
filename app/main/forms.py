@@ -14,12 +14,6 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField(u'保持登录')
     submit = SubmitField(u'登录')
 
-class UploadForm(FlaskForm):
-    picture = FileField(u'图片上传', validators=[
-        FileAllowed(pictures, u'只能上传图片！'),
-        FileRequired(u'未选择文件！')])
-    submit = SubmitField(u'上传')
-
 
 class PostForm(FlaskForm):
     title = StringField(u'标题', validators=[

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+<form action="{{ url_for('user.profile') }}" method="POST" enctype="multipart/form-data">
+	{{ form.hidden_tag() }}
+	{{ wtf.form_field(form.avatar) }}
+	{{ wtf.form_field(form.submit) }}
+</form>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+{% endblock %}

@@ -8,7 +8,7 @@ from flask_sqlalchemy import get_debug_queries
 
 from . import main
 from .. import db, pictures
-from .forms import LoginForm, PostForm, UploadForm
+from .forms import LoginForm, PostForm
 from ..models import User, Post, Tag
 
 def subject_filter(subject):
@@ -67,7 +67,8 @@ def index():
         page, per_page=current_app.config['POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('index.html', posts=posts,
+    user = User.query.first()
+    return render_template('index.html', posts=posts, user=user,
                            pagination=pagination, tags=tags)
 
 @main.route('/search', methods=['GET', 'POST'])
@@ -133,17 +134,6 @@ def upload_picture():
         file_url = current_app.config['RENDER_PICTURES_DEST'] + filename
         return jsonify({'name': filename,
                         'url': file_url,
-                        'status': 'upload success'})
-    return jsonify({'status': "upload fail"})
-
-@main.route('/upload-avatar/', methods=['POST'])
-@login_required
-def upload_avatar():
-    if 'file' in request.files:
-        filename = pictures.save(request.files['file'])
-        file_url = current_app.config['RENDER_PICTURES_DEST'] + filename
-        current_user.avatar = file_url
-        return jsonify({'url': file_url,
                         'status': 'upload success'})
     return jsonify({'status': "upload fail"})
 

@@ -15,6 +15,7 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') 
     POSTS_PER_PAGE = 7
     SQLALCHEMY_RECORD_QUERIES = True
+    SSL_DISABLE = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.environ.get('SECRET_KEY') or "string haven't been set"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -73,5 +74,5 @@ config = {
     'testing': TestingConfig,
     'production': ProductionConfig,
 
-    'default': DevelopmentConfig
+    'default': ProductionConfig
 }

@@ -52,7 +52,7 @@
 					下拉菜单 <b class="caret"></b>
 				</a>
 				<ul class="dropdown-menu">
-					<li><a href="#">动作</a></li>
+					<li><a href="{{ url_for('main.logout') }}">动作</a></li>
 					<li><a href="#">又一个动作</a></li>
 					<li><a href="#">放些东西</a></li>
 					<li class="divider"></li>
@@ -60,7 +60,7 @@
 				</ul>
 			</li>
 			<li>
-				<a href="{{ url_for('main.logout') }}">
+				<a href="{{ url_for('user.profile') }}">
 					<span class="visible-sm visible-xs">
 						Settings
 						<span class="fui-gear"></span>
@@ -78,8 +78,10 @@
 {% endblock %}
 
 {% block content %}
+<!--
 <div class="jumbotron">
 </div>
+-->
 <div class="container">
 	{% for message in get_flashed_messages() %}
 	<div class="alert alert-warning">

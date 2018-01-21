@@ -1,4 +1,4 @@
-#!/home/thdice/myblog/venv/bin/python
+#!/var/www/projects/myblog/venv/bin/python
 
 import sys
 import getopt

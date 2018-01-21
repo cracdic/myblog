@@ -124,13 +124,13 @@ class Post(db.Model):
 
     @staticmethod
     def on_changed_body_brief(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
                         'h1', 'h2', 'h3','h4', 'h5', 'h6', 'p']
         brief = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
-        target.body_brief = brief[0:600] + '...'
+        target.body_brief = brief[0:300] + '...'
 
     @staticmethod
     def generate_fake(count=100):

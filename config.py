@@ -31,19 +31,19 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        ('mysql+pymysql://' + os.environ.get('MYSQL_USERNAME') + 
+        ('mysql+pymysql://' + os.environ.get('MYSQL_USERNAME') + ':' + 
          os.environ.get('MYSQL_PASSWORD') + '@localhost:3306/blogDevDB')
  
 class TestingConfig(Config):
     WTF_CSRF_ENABLED = False
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        ('mysql+pymysql://' + os.environ.get('MYSQL_USERNAME') + 
+        ('mysql+pymysql://' + os.environ.get('MYSQL_USERNAME') + ':' + 
          os.environ.get('MYSQL_PASSWORD') + '@localhost:3306/blogTestDB')
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        ('mysql+pymysql://' + os.environ.get('MYSQL_USERNAME') + 
+        ('mysql+pymysql://' + os.environ.get('MYSQL_USERNAME') + ':' + 
          os.environ.get('MYSQL_PASSWORD') + '@localhost:3306/blogDB')
 
     @classmethod

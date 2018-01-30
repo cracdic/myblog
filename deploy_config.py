@@ -5,7 +5,7 @@ gevent.monkey.patch_all()
 
 import multiprocessing
 
-bind='127.0.0.1:8080'
+bind='0.0.0.0:8080'
 
 # multiple processing
 workers= multiprocessing.cpu_count() * 2 + 1
@@ -18,6 +18,6 @@ x_forwarded_for_header = 'X-FORWARDED-FOR'
 backlog=2048
 debug=True
 proc_name='gunicorn.pid'
-pidfile='/var/log/gunicorn/gunicorn.pid'
-logfile='/var/log/gunicorn/debug.log'
+pidfile='/home/thdice/log/gunicorn.pid'
+logfile='/home/thdice/log/debug.log'
 loglevel='debug'

@@ -4,6 +4,7 @@ from werkzeug import secure_filename
 from flask import render_template, redirect, url_for, request, flash, current_app
 from flask_login import current_user, login_required
 from . import user
+from ..main import main
 from .. import db, pictures
 from .forms import UploadForm
 from ..models import User, Post, Tag
@@ -18,6 +19,5 @@ def profile():
         current_user.avatar = file_url
         db.session.add(current_user)
         db.session.commit()
-        flash(u'头像已更新')
-        return redirect(url_for('.profile'))
+        return redirect(url_for('main.index'))
     return render_template('user/profile.html', form=form)

@@ -1,2 +1,9 @@
 *.[log]
 *.env
+*.pyc
+deploy_config.py
+*.stackdump
+whoosh_index
+whoosh_index/*
+tmp
+tmp/*

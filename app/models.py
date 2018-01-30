@@ -2,19 +2,20 @@
 
 from . import db
 from . import login_manager
+from struct import unpack, pack
+from socket import inet_ntoa, inet_aton
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from app.exceptions import ValidationError
 from datetime import datetime
 from markdown import markdown
 from jieba.analyse import ChineseAnalyzer
-import sys
-import hashlib
 import bleach
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -37,9 +38,21 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return '<User %r>' % self.id
 
+
 categories = db.Table('categories',
-    db.Column('post_id', db.Integer, db.ForeignKey('tags.id')),
-    db.Column('tag_id', db.Integer, db.ForeignKey('posts.id')))
+                      db.Column('post_id', db.Integer,
+                                db.ForeignKey('tags.id')),
+                      db.Column('tag_id', db.Integer,
+                                db.ForeignKey('posts.id')))
+
+
+# count viewed ip for each post
+postviews = db.Table('postviews',
+                     db.Column('post_id', db.Integer,
+                               db.ForeignKey('ipaddresses.id')),
+                     db.Column('ipaddr_id', db.Integer,
+                               db.ForeignKey('posts.id')))
+
 
 class Tag(db.Model):
     __tablename__ = "tags"
@@ -70,6 +83,24 @@ class Tag(db.Model):
                 db.session.delete(tag)
         db.session.commit()
 
+
+class IpAddress(db.Model):
+    __tablename__ = "ipaddresses"
+    id = db.Column(db.Integer, primary_key=True)
+    ipaddr = db.Column(db.BigInteger, unique=True)
+
+    def __repr__(self):
+        return '<IpAddress %r>' % self.id
+
+    @staticmethod
+    def ip2int(addr_str):
+        return unpack("!I", inet_aton(addr_str))[0]
+
+    @staticmethod
+    def int2ip(addr_int):
+        return inet_ntoa(pack("!I", addr_int))
+
+
 class Post(db.Model):
     __tablename__ = 'posts'
     __searchable__ = ['subject', 'title', 'body']
@@ -86,6 +117,10 @@ class Post(db.Model):
                            secondary=categories,
                            backref=db.backref('posts', lazy='dynamic'),
                            lazy='dynamic')
+    ip_viewed = db.relationship('IpAddress',
+                                secondary=postviews,
+                                backref=db.backref('posts', lazy='dynamic'),
+                                lazy='dynamic')
 
     def __repr__(self):
         return '<Post %r>' % self.id
@@ -112,6 +147,12 @@ class Post(db.Model):
         tags = [tag_object.name for tag_object in tag_objects]
         return tags
 
+    def add_record(self, ipaddress):
+        ip = IpAddress(ipaddr=IpAddress.ip2int(ipaddress))
+        self.ip_viewed.append(ip)
+        db.session.add([ip, self])
+        db.session.commit()
+
     @staticmethod
     def on_changed_body_html(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
@@ -126,7 +167,7 @@ class Post(db.Model):
     def on_changed_body_brief(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3','h4', 'h5', 'h6', 'p']
+                        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']
         brief = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))

@@ -102,6 +102,11 @@ div.tags {
 	padding-top: 100px;
 }
 
+div.viewed {
+    display: inline;
+    margin-left: 25px;
+}
+
 div.posts-date {
 	display: inline;
 	position: absolute; 
@@ -168,6 +173,6 @@ div.posts-set {
 
 body {
 	margin-top: 53px;
-	background-color: #1ABC9C;
+	background-color: #3498DB;
 }
 
